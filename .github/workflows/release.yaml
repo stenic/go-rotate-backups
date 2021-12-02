@@ -43,7 +43,7 @@ jobs:
 
   version:
     name: Semantic versioning
-    needs: build
+    needs: [build, docker_build]
     runs-on: ubuntu-latest
     outputs:
       new_release_published: "${{ steps.semantic.outputs.new_release_published }}"
