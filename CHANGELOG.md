@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/stenic/go-rotate-backups/compare/v1.0.0...v1.0.1) (2021-12-09)
+
+
+### Bug Fixes
+
+* Trigger new release ([5679629](https://github.com/stenic/go-rotate-backups/commit/56796291f00cb826643f3c0a71db66119a1e6361))
+
 # 1.0.0 (2021-12-02)
 
 
