@@ -73,6 +73,30 @@ Flags:
       --yearly int         Amount of yearly backups to keep (default 5)
 ```
 
+### How does it work
+
+When running the command, the provided files will be copied to the backup location. After the copy is
+completed, it will check the rotation configuration to cleanup unneeded backups.
+
+__Backup__
+
+Depending on the current date, it will upload to different folders:
+
+
+| Date | Target |
+| --- | --- |
+| first day of the year | yearly/${date}_${time} |
+| first day of the month | monthly/${date}_${time} |
+| first day of the week | weekly/${date}_${time} |
+| other | daily/${date}_${time} |
+
+__Rotate__
+
+Rotate will keep the `n` most recent files in the backup folder and clear out the others.
+
+See `yearly`, `monthly`, `weekly` and `daily` for setting the different rotation settings.
+
+
 ### Drivers
 
 __local__
