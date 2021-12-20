@@ -81,7 +81,9 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 		storageDriver.SetTargetPath(targetDir)
-		storageDriver.Init()
+		if err := storageDriver.Init(); err != nil {
+			return err
+		}
 		if dryRun {
 			storageDriver = &drivers.DryRunDriver{
 				Wrapped: storageDriver,

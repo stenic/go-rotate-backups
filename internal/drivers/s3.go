@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,7 +36,11 @@ func (d *S3Driver) Init() error {
 		return fmt.Errorf("you need to set 'GRB_S3_BUCKET' for a target bucket")
 	}
 
-	return nil
+	svc := sts.New(d.getSession())
+	identity, err := svc.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	logrus.Debugf("Connected to s3 as %s", identity.String())
+
+	return err
 }
 
 func (d *S3Driver) ListDirs(path string) ([]string, error) {
@@ -62,7 +67,6 @@ func (d *S3Driver) listRaw(path string) ([]string, error) {
 
 	svc := s3.New(d.getSession())
 
-	logrus.Tracef("Listing %s:%s", d.bucket, path)
 	err := svc.ListObjectsV2Pages(&s3.ListObjectsV2Input{
 		Bucket:  aws.String(d.bucket),
 		Prefix:  aws.String(path),
@@ -73,6 +77,8 @@ func (d *S3Driver) listRaw(path string) ([]string, error) {
 		}
 		return true
 	})
+
+	logrus.Tracef("Listing %s:%s -> %v", d.bucket, path, res)
 
 	return res, err
 }
