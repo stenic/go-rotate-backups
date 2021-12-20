@@ -25,7 +25,8 @@ var (
 	targetDir   string
 	driverName  string
 	// Extras
-	v string
+	v      string
+	dryRun bool
 	// Hidden
 	backupDate string
 )
@@ -51,6 +52,7 @@ func init() {
 
 	// Extras
 	rootCmd.Flags().StringVarP(&v, "verbosity", "v", logrus.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic")
+	rootCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Don't change any files")
 
 	// Hidden
 	rootCmd.Flags().StringVar(&backupDate, "date", "", "Testing: Set time of the backup")
@@ -80,6 +82,12 @@ var rootCmd = &cobra.Command{
 		}
 		storageDriver.SetTargetPath(targetDir)
 		storageDriver.Init()
+		if dryRun {
+			storageDriver = &drivers.DryRunDriver{
+				Wrapped: storageDriver,
+			}
+		}
+
 		util := utils.Utils{
 			Driver: storageDriver,
 		}
