@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/stenic/go-rotate-backups/compare/v1.0.2...v1.1.0) (2021-12-20)
+
+
+### Features
+
+* Implement dry-run ([3e9f1bd](https://github.com/stenic/go-rotate-backups/commit/3e9f1bd1219cae65e5a9826f3bd5d06c8ee20e3f))
+
 ## [1.0.2](https://github.com/stenic/go-rotate-backups/compare/v1.0.1...v1.0.2) (2021-12-13)
 
 
