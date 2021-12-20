@@ -70,7 +70,7 @@ func (d *S3Driver) listRaw(path string) ([]string, error) {
 	err := svc.ListObjectsV2Pages(&s3.ListObjectsV2Input{
 		Bucket:  aws.String(d.bucket),
 		Prefix:  aws.String(path),
-		MaxKeys: aws.Int64(2),
+		MaxKeys: aws.Int64(20),
 	}, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
 		for _, i := range page.Contents {
 			res = append(res, *i.Key)
