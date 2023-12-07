@@ -55,11 +55,19 @@ func (d *S3Driver) ListDirs(path string) ([]string, error) {
 		return res, err
 	}
 
+	return s3ItemsToFolders(path, items), err
+}
+
+func s3ItemsToFolders(path string, items []string) []string {
+	if !strings.HasSuffix(path, "/") {
+		path += "/"
+	}
+	res := []string{}
 	for _, i := range items {
-		res = append(res, strings.Split(strings.Replace(i, path, "", 1), "/")[0])
+		res = append(res, strings.Split(strings.TrimPrefix(i, path), "/")[0])
 	}
 
-	return removeDuplicateStr(res), err
+	return removeDuplicateStr(res)
 }
 
 func removeDuplicateStr(strSlice []string) []string {
