@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.3](https://github.com/stenic/go-rotate-backups/compare/v1.1.2...v1.1.3) (2023-12-07)
+
+
+### Bug Fixes
+
+* Upgrade golang ([9715d92](https://github.com/stenic/go-rotate-backups/commit/9715d92b4508d4002e6f9e8fab370c2b167697c1))
+
 ## [1.1.2](https://github.com/stenic/go-rotate-backups/compare/v1.1.1...v1.1.2) (2023-12-07)
 
 
