@@ -21,7 +21,7 @@ func (u *Utils) CleanFolder(dirPath string, keepCount int) error {
 	if len(dirs) > keepCount {
 		for _, old := range u.GetOldestN(dirs, len(dirs)-keepCount) {
 			path := path.Join(dirPath, old)
-			logrus.Debugf("Deleting up %s", path)
+			logrus.Debugf("Cleaning up %s", path)
 			if err := u.Driver.Delete(path); err != nil {
 				return err
 			}
