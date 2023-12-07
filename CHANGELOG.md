@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://github.com/stenic/go-rotate-backups/compare/v1.1.1...v1.1.2) (2023-12-07)
+
+
+### Bug Fixes
+
+* CI upgrade ([a3e3282](https://github.com/stenic/go-rotate-backups/commit/a3e328299cd336480c77f4491bb6f878119ba78f))
+* List single dirs ([3d37de0](https://github.com/stenic/go-rotate-backups/commit/3d37de0ec53e940f05b6a880b0017d23963da60a))
+* Typo ([087e1f7](https://github.com/stenic/go-rotate-backups/commit/087e1f7d34b8684cf7b992dc27981651c14d098f))
+
 ## [1.1.1](https://github.com/stenic/go-rotate-backups/compare/v1.1.0...v1.1.1) (2021-12-20)
 
 
