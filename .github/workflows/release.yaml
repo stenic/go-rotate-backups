@@ -13,7 +13,7 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v2
         with:
-          go-version: "1.17"
+          go-version: 1.21
       - uses: actions/cache@v2
         with:
           path: |
@@ -53,7 +53,7 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v2
         with:
-          go-version: "1.17"
+          go-version: 1.21
       - uses: actions/cache@v2
         with:
           path: |
@@ -89,7 +89,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.17
+          go-version: 1.21
       - name: Install vembed
         run: go install github.com/NoUseFreak/go-vembed/vembed@latest
       - name: Prepare vembed info
