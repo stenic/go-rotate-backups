@@ -59,7 +59,19 @@ func (d *S3Driver) ListDirs(path string) ([]string, error) {
 		res = append(res, strings.Split(strings.Replace(i, path, "", 1), "/")[0])
 	}
 
-	return res, err
+	return removeDuplicateStr(res), err
+}
+
+func removeDuplicateStr(strSlice []string) []string {
+	allKeys := make(map[string]bool)
+	list := []string{}
+	for _, item := range strSlice {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }
 
 func (d *S3Driver) listRaw(path string) ([]string, error) {
