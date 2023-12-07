@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.4](https://github.com/stenic/go-rotate-backups/compare/v1.1.3...v1.1.4) (2023-12-07)
+
+
+### Bug Fixes
+
+* s3 dirs ([bbde8d8](https://github.com/stenic/go-rotate-backups/commit/bbde8d8fcd9bb2d12078887a77536a00415d3ece))
+
 ## [1.1.3](https://github.com/stenic/go-rotate-backups/compare/v1.1.2...v1.1.3) (2023-12-07)
 
 
