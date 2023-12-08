@@ -13,11 +13,11 @@ type Utils struct {
 }
 
 func (u *Utils) CleanFolder(dirPath string, keepCount int) error {
-	logrus.Debugf("Listing %s", dirPath)
 	dirs, err := u.Driver.ListDirs(dirPath)
 	if err != nil {
 		logrus.Error(err.Error())
 	}
+	logrus.Infof("Listing %s: %v", dirPath, dirs)
 	if len(dirs) > keepCount {
 		for _, old := range u.GetOldestN(dirs, len(dirs)-keepCount) {
 			path := path.Join(dirPath, old)
