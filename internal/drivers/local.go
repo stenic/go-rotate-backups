@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 func init() {
@@ -64,6 +65,8 @@ func (d *LocalDriver) Copy(src, dst string) (int64, error) {
 		return 0, err
 	}
 	defer source.Close()
+
+	os.MkdirAll(filepath.Dir(dst), 0750)
 
 	destination, err := os.Create(dst)
 	if err != nil {

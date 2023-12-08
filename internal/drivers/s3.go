@@ -137,7 +137,7 @@ func (d *S3Driver) Copy(src, dst string) (int64, error) {
 		return 0, fmt.Errorf("failed to open file %q, %v", src, err)
 	}
 
-	logrus.Tracef("Uploading %s:%s", d.bucket, src)
+	logrus.Tracef("Uploading %s to %s:%s", src, d.bucket, dst)
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(d.bucket),
 		Key:    aws.String(dst),

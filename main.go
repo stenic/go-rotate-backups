@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"path/filepath"
 	"time"
 
 	vembed "github.com/NoUseFreak/go-vembed"
@@ -76,6 +77,7 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, files []string) error {
 		date, _ := cmd.Flags().GetString("date")
 
+		files = resolveFiles(files)
 		storageDriver, err := drivers.GetDriver(driverName)
 		if err != nil {
 			return err
@@ -104,6 +106,28 @@ var rootCmd = &cobra.Command{
 
 		return rotateFunc(util, cmd, files)
 	},
+}
+
+func resolveFiles(files []string) []string {
+	resolvedFiles := []string{}
+	for _, file := range files {
+		if info, err := os.Stat(file); err == nil {
+			if info.IsDir() {
+				filepath.Walk(file, func(path string, info os.FileInfo, err error) error {
+					if !info.IsDir() {
+						resolvedFiles = append(resolvedFiles, path)
+					}
+					return nil
+				})
+			} else {
+				resolvedFiles = append(resolvedFiles, file)
+			}
+		} else {
+			logrus.Warn("File not found: ", file)
+		}
+	}
+
+	return resolvedFiles
 }
 
 func setUpLogs(out io.Writer, level string) error {

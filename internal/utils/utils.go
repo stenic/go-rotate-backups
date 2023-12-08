@@ -49,7 +49,7 @@ func (u *Utils) CopyFiles(files []string, target string) error {
 		return err
 	}
 	for _, file := range files {
-		if _, err := u.Driver.Copy(file, path.Join(target, path.Base(file))); err != nil {
+		if _, err := u.Driver.Copy(file, path.Join(target, file)); err != nil {
 			return err
 		}
 	}
