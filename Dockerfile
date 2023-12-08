@@ -5,6 +5,7 @@ COPY go.* .
 RUN go mod download
 COPY main.go main.go
 COPY internal internal
+RUN go test ./...
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o /go-rotate-backups main.go
 
 
