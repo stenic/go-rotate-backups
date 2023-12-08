@@ -26,8 +26,9 @@ var (
 	targetDir   string
 	driverName  string
 	// Extras
-	v      string
-	dryRun bool
+	v         string
+	dryRun    bool
+	logFormat string
 	// Hidden
 	backupDate string
 )
@@ -54,6 +55,7 @@ func init() {
 	// Extras
 	rootCmd.Flags().StringVarP(&v, "verbosity", "v", logrus.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic")
 	rootCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Don't change any files")
+	rootCmd.Flags().StringVar(&logFormat, "log-format", "text", "Log format (text, json)")
 
 	// Hidden
 	rootCmd.Flags().StringVar(&backupDate, "date", "", "Testing: Set time of the backup")
@@ -139,9 +141,16 @@ func setUpLogs(out io.Writer, level string) error {
 	}
 	logrus.SetLevel(lvl)
 
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.DisableTimestamp = true
-	logrus.SetFormatter(customFormatter)
+	switch logFormat {
+	case "json":
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+	case "text":
+		customFormatter := new(logrus.TextFormatter)
+		customFormatter.DisableTimestamp = true
+		logrus.SetFormatter(customFormatter)
+	default:
+		logrus.Error("Unknown log format: ", logFormat)
+	}
 
 	return nil
 }
