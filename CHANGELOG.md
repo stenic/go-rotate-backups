@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/stenic/go-rotate-backups/compare/v1.1.4...v1.2.0) (2023-12-08)
+
+
+### Features
+
+* Add directories and maintain structure ([25b3690](https://github.com/stenic/go-rotate-backups/commit/25b3690885ca351d79deb5f9eba0ab6cdc716f80))
+
 ## [1.1.4](https://github.com/stenic/go-rotate-backups/compare/v1.1.3...v1.1.4) (2023-12-07)
 
 
