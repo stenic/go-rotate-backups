@@ -2,33 +2,48 @@ package utils
 
 import (
 	"path"
+	"path/filepath"
 	"sort"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stenic/go-rotate-backups/internal/drivers"
 )
 
 type Utils struct {
-	Driver drivers.Driver
+	Driver     drivers.Driver
+	DateFormat string
 }
 
-func (u *Utils) CleanFolder(dirPath string, keepCount int) error {
+func (u *Utils) CleanFolder(dirPath string, cutoff time.Time) error {
 	dirs, err := u.Driver.ListDirs(dirPath)
 	if err != nil {
 		logrus.Error(err.Error())
 	}
 	logrus.Infof("Listing %s: %v", dirPath, dirs)
-	if len(dirs) > keepCount {
-		for _, old := range u.GetOldestN(dirs, len(dirs)-keepCount) {
-			path := path.Join(dirPath, old)
-			logrus.Debugf("Cleaning up %s", path)
-			if err := u.Driver.Delete(path); err != nil {
-				return err
-			}
+	for _, dir := range u.getDeleteDirs(dirs, cutoff) {
+		logrus.Debugf("Cleaning up %s", dir)
+		if err := u.Driver.Delete(filepath.Join(dirPath, dir)); err != nil {
+			return err
 		}
 	}
-
 	return nil
+}
+
+func (u *Utils) getDeleteDirs(dirs []string, cutoff time.Time) []string {
+	deleteList := []string{}
+	for _, dir := range dirs {
+		dirTime, err := time.Parse(u.DateFormat, dir)
+		if err != nil {
+			logrus.Warnf("Could not parse %s as date: %v", dir, err)
+			continue
+		}
+		if dirTime.Before(cutoff) {
+			deleteList = append(deleteList, dir)
+		}
+	}
+	return deleteList
+
 }
 
 func (u *Utils) GetPaths(targetPath string) (string, string, string, string) {

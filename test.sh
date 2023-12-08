@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e 
+
 go build -o ./test-binary main.go
 trap "rm -rf ./test-binary" EXIT
 

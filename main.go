@@ -95,7 +95,8 @@ var rootCmd = &cobra.Command{
 		}
 
 		util := utils.Utils{
-			Driver: storageDriver,
+			Driver:     storageDriver,
+			DateFormat: DateFormat,
 		}
 
 		if nowInput, err := time.Parse(DateFormat, date); err == nil {
@@ -174,16 +175,16 @@ func addFunc(util utils.Utils, cmd *cobra.Command, files []string) error {
 func rotateFunc(util utils.Utils, cmd *cobra.Command, files []string) error {
 	daily, weekly, monthly, yearly := util.GetPaths(util.Driver.GetTargetPath())
 
-	if err := util.CleanFolder(daily, keepDaily); err != nil {
+	if err := util.CleanFolder(daily, now.AddDate(0, 0, -keepDaily)); err != nil {
 		return err
 	}
-	if err := util.CleanFolder(weekly, keepWeekly); err != nil {
+	if err := util.CleanFolder(weekly, now.AddDate(0, 0, -keepWeekly*7)); err != nil {
 		return err
 	}
-	if err := util.CleanFolder(monthly, keepMonthly); err != nil {
+	if err := util.CleanFolder(monthly, now.AddDate(0, -keepMonthly, 0)); err != nil {
 		return err
 	}
-	if err := util.CleanFolder(yearly, keepYearly); err != nil {
+	if err := util.CleanFolder(yearly, now.AddDate(-keepYearly, 0, 0)); err != nil {
 		return err
 	}
 
