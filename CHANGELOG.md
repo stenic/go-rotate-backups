@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/stenic/go-rotate-backups/compare/v1.2.0...v1.2.1) (2023-12-08)
+
+
+### Bug Fixes
+
+* No more fish ([231fd06](https://github.com/stenic/go-rotate-backups/commit/231fd06b8bd08ce39a76b828973a6628f9118b31))
+* Upgrade deps ([b1181c7](https://github.com/stenic/go-rotate-backups/commit/b1181c775339b0aed6699b6b5e27818fc69061e4))
+* Upgrade deps ([23c65ab](https://github.com/stenic/go-rotate-backups/commit/23c65abe29b86c3f434d6de1987b2c173c37f138))
+
 # [1.2.0](https://github.com/stenic/go-rotate-backups/compare/v1.1.4...v1.2.0) (2023-12-08)
 
 
