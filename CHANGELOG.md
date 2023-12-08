@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/stenic/go-rotate-backups/compare/v1.2.2...v1.3.0) (2023-12-08)
+
+
+### Bug Fixes
+
+* Run tests ([9d14e6b](https://github.com/stenic/go-rotate-backups/commit/9d14e6bb22f9b531fe912508b410260d3a6b26b0))
+
+
+### Features
+
+* Delete is now time based, not count based ([c394f0d](https://github.com/stenic/go-rotate-backups/commit/c394f0d0248874d7806714fc433eaa46d51462aa))
+
 ## [1.2.2](https://github.com/stenic/go-rotate-backups/compare/v1.2.1...v1.2.2) (2023-12-08)
 
 
