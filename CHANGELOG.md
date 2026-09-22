@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/stenic/go-rotate-backups/compare/v1.4.0...v1.4.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* fail and clean up partial backups ([354fad0](https://github.com/stenic/go-rotate-backups/commit/354fad00be288f7625932f7148852aa7d3a2adb8))
+
 # [1.4.0](https://github.com/stenic/go-rotate-backups/compare/v1.3.0...v1.4.0) (2026-09-22)
 
 
