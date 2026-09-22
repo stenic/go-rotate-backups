@@ -3,7 +3,6 @@ package utils
 import (
 	"path"
 	"path/filepath"
-	"sort"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -18,7 +17,7 @@ type Utils struct {
 func (u *Utils) CleanFolder(dirPath string, cutoff time.Time) error {
 	dirs, err := u.Driver.ListDirs(dirPath)
 	if err != nil {
-		logrus.Error(err.Error())
+		return err
 	}
 	logrus.Infof("Listing %s: %v", dirPath, dirs)
 	for _, dir := range u.getDeleteDirs(dirs, cutoff) {
@@ -57,15 +56,14 @@ const (
 )
 
 // CoversPeriod reports whether dirPath already holds a backup that falls in the
-// same period as at. A listing error is logged and treated as "not covered", so
-// a missing or unreadable tier still receives a backup.
-func (u *Utils) CoversPeriod(dirPath string, at time.Time, period Period) bool {
+// same period as at.
+func (u *Utils) CoversPeriod(dirPath string, at time.Time, period Period) (bool, error) {
 	dirs, err := u.Driver.ListDirs(dirPath)
 	if err != nil {
-		logrus.Error(err.Error())
+		return false, err
 	}
 
-	return u.coversPeriod(dirs, at, period)
+	return u.coversPeriod(dirs, at, period), nil
 }
 
 func (u *Utils) coversPeriod(dirs []string, at time.Time, period Period) bool {
@@ -98,17 +96,18 @@ func samePeriod(a, b time.Time, period Period) bool {
 	return false
 }
 
-func (u *Utils) GetPaths(targetPath string) (string, string, string, string) {
+func (u *Utils) GetPaths(targetPath string) (string, string, string, string, error) {
 	daily := path.Join(targetPath, "daily")
-	u.Driver.Mkdir(daily)
 	weekly := path.Join(targetPath, "weekly")
-	u.Driver.Mkdir(weekly)
 	monthly := path.Join(targetPath, "monthly")
-	u.Driver.Mkdir(monthly)
 	yearly := path.Join(targetPath, "yearly")
-	u.Driver.Mkdir(yearly)
+	for _, dir := range []string{daily, weekly, monthly, yearly} {
+		if err := u.Driver.Mkdir(dir); err != nil {
+			return "", "", "", "", err
+		}
+	}
 
-	return daily, weekly, monthly, yearly
+	return daily, weekly, monthly, yearly, nil
 }
 
 func (u *Utils) CopyFiles(files []string, target string) error {
@@ -122,13 +121,4 @@ func (u *Utils) CopyFiles(files []string, target string) error {
 	}
 
 	return nil
-}
-
-func (u *Utils) GetOldestN(list []string, cnt int) []string {
-	if len(list) < cnt {
-		return []string{}
-	}
-
-	sort.Strings(list)
-	return list[0:cnt]
 }

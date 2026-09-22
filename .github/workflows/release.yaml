@@ -1,5 +1,6 @@
 name: Release
 on:
+  pull_request:
   push:
     branches:
       - 'main'
@@ -43,6 +44,7 @@ jobs:
 
   version:
     name: Semantic versioning
+    if: github.event_name == 'push'
     needs: [build, docker_build]
     runs-on: ubuntu-latest
     outputs:
