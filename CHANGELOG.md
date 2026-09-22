@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/stenic/go-rotate-backups/compare/v1.3.0...v1.4.0) (2026-09-22)
+
+
+### Bug Fixes
+
+* Fail when backup folders cannot be listed ([4e6d5c8](https://github.com/stenic/go-rotate-backups/commit/4e6d5c832be7f7998255db4b6bbf382380c3318b))
+
+
+### Features
+
+* Fill backup folders once per period instead of by calendar date ([283b6f9](https://github.com/stenic/go-rotate-backups/commit/283b6f90b3eeaadaaf3fdbb78231945b29242138))
+
 # [1.3.0](https://github.com/stenic/go-rotate-backups/compare/v1.2.2...v1.3.0) (2023-12-08)
 
 
