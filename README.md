@@ -80,19 +80,25 @@ completed, it will check the rotation configuration to cleanup unneeded backups.
 
 __Backup__
 
-Depending on the current date, it will upload to different folders:
+Every run is uploaded to `daily/${date}_${time}`. The longer-lived folders additionally
+receive a copy whenever they do not hold a backup for the current period yet:
 
-
-| Date | Target |
+| Target | Receives a copy when |
 | --- | --- |
-| first day of the year | yearly/${date}_${time} |
-| first day of the month | monthly/${date}_${time} |
-| first day of the week | weekly/${date}_${time} |
-| other | daily/${date}_${time} |
+| daily/${date}_${time} | always |
+| weekly/${date}_${time} | `weekly` holds no backup for the current ISO week |
+| monthly/${date}_${time} | `monthly` holds no backup for the current month |
+| yearly/${date}_${time} | `yearly` holds no backup for the current year |
+
+This makes the folders independent of how often the command runs: an hourly schedule
+fills `daily` with every run while still adding exactly one backup per week, month and
+year to the other folders.
 
 __Rotate__
 
-Rotate will keep the `n` most recent files in the backup folder and clear out the others.
+Rotate is time based. Each folder keeps the backups that are newer than its retention
+window and deletes the rest, so `--daily 7` means seven days of history regardless of
+how many backups were taken per day.
 
 See `yearly`, `monthly`, `weekly` and `daily` for setting the different rotation settings.
 

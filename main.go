@@ -159,17 +159,32 @@ func setUpLogs(out io.Writer, level string) error {
 func addFunc(util utils.Utils, cmd *cobra.Command, files []string) error {
 	daily, weekly, monthly, yearly := util.GetPaths(util.Driver.GetTargetPath())
 
-	target := path.Join(daily, now.Format(DateFormat))
-	if now.Month() == time.January && now.Day() == 1 {
-		target = path.Join(yearly, now.Format(DateFormat))
-	} else if now.Day() == 1 {
-		target = path.Join(monthly, now.Format(DateFormat))
-	} else if now.Weekday() == time.Monday {
-		target = path.Join(weekly, now.Format(DateFormat))
+	// Every run lands in daily. The longer tiers only take a copy when they
+	// hold nothing for the current period yet, so the number of runs per day
+	// does not change how the tiers fill up.
+	dirs := []string{daily}
+	for _, tier := range []struct {
+		path   string
+		period utils.Period
+	}{
+		{weekly, utils.PeriodWeek},
+		{monthly, utils.PeriodMonth},
+		{yearly, utils.PeriodYear},
+	} {
+		if !util.CoversPeriod(tier.path, now, tier.period) {
+			dirs = append(dirs, tier.path)
+		}
 	}
 
-	logrus.Infof("Backing up %d files to %s", len(files), target)
-	return util.CopyFiles(files, target)
+	for _, dir := range dirs {
+		target := path.Join(dir, now.Format(DateFormat))
+		logrus.Infof("Backing up %d files to %s", len(files), target)
+		if err := util.CopyFiles(files, target); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func rotateFunc(util utils.Utils, cmd *cobra.Command, files []string) error {
