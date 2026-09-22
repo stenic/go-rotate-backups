@@ -63,7 +63,9 @@ func init() {
 }
 
 func main() {
-	rootCmd.Execute()
+	if err := rootCmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
 
 var rootCmd = &cobra.Command{
@@ -187,6 +189,9 @@ func addFunc(util utils.Utils, cmd *cobra.Command, files []string) error {
 		target := path.Join(dir, now.Format(DateFormat))
 		logrus.Infof("Backing up %d files to %s", len(files), target)
 		if err := util.CopyFiles(files, target); err != nil {
+			if cleanupErr := util.Driver.Delete(target); cleanupErr != nil {
+				return fmt.Errorf("backup failed: %v; cleanup failed: %v", err, cleanupErr)
+			}
 			return err
 		}
 	}

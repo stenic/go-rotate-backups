@@ -70,6 +70,30 @@ func TestAddFuncReturnsListingError(t *testing.T) {
 	}
 }
 
+func TestAddFuncRemovesPartialBackup(t *testing.T) {
+	target := t.TempDir()
+	driver := &drivers.LocalDriver{}
+	driver.SetTargetPath(target)
+	util := utils.Utils{Driver: driver, DateFormat: DateFormat}
+
+	originalNow := now
+	now = time.Date(2024, 5, 1, 0, 0, 0, 0, time.UTC)
+	t.Cleanup(func() { now = originalNow })
+
+	err := addFunc(util, nil, []string{filepath.Join(t.TempDir(), "missing.dump")})
+	if err == nil {
+		t.Fatal("addFunc() succeeded with a missing source file")
+	}
+
+	entries, err := os.ReadDir(filepath.Join(target, "daily"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 0 {
+		t.Fatalf("daily contains partial backup entries: %v", entries)
+	}
+}
+
 type listErrorDriver struct {
 	drivers.BaseDriver
 	err        error
