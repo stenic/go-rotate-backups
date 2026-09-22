@@ -23,6 +23,9 @@ func (d *LocalDriver) Init() error {
 func (d *LocalDriver) ListDirs(path string) ([]string, error) {
 	res := []string{}
 	files, err := ioutil.ReadDir(path)
+	if os.IsNotExist(err) {
+		return res, nil
+	}
 	if err != nil {
 		return res, err
 	}

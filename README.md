@@ -92,7 +92,8 @@ receive a copy whenever they do not hold a backup for the current period yet:
 
 This makes the folders independent of how often the command runs: an hourly schedule
 fills `daily` with every run while still adding exactly one backup per week, month and
-year to the other folders.
+year to the other folders. If backup starts partway through a period, its first run
+becomes that period's weekly, monthly or yearly backup.
 
 __Rotate__
 
