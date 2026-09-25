@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/stenic/go-rotate-backups/compare/v1.4.1...v1.5.0) (2026-09-25)
+
+
+### Features
+
+* Let runs with one --date share a snapshot ([2f8ede7](https://github.com/stenic/go-rotate-backups/commit/2f8ede75de8b45cfb358c7702522f869ffd3ec18))
+
 ## [1.4.1](https://github.com/stenic/go-rotate-backups/compare/v1.4.0...v1.4.1) (2026-09-22)
 
 
