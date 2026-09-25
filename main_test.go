@@ -94,6 +94,98 @@ func TestAddFuncRemovesPartialBackup(t *testing.T) {
 	}
 }
 
+// sharedRun sets up a local target and a working directory holding the named
+// dumps, so runs reference them the way callers do ("./a.dump").
+func sharedRun(t *testing.T, names ...string) (utils.Utils, string) {
+	t.Helper()
+	target := t.TempDir()
+	work := t.TempDir()
+	for _, name := range names {
+		if err := os.WriteFile(filepath.Join(work, name), []byte(name), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(work); err != nil {
+		t.Fatal(err)
+	}
+	originalNow := now
+	now = time.Date(2024, 5, 1, 23, 0, 0, 0, time.UTC)
+	t.Cleanup(func() {
+		now = originalNow
+		os.Chdir(wd)
+	})
+
+	driver := &drivers.LocalDriver{}
+	driver.SetTargetPath(target)
+	return utils.Utils{Driver: driver, DateFormat: DateFormat}, target
+}
+
+func snapshotFiles(t *testing.T, dir string) []string {
+	t.Helper()
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := []string{}
+	for _, entry := range entries {
+		got = append(got, entry.Name())
+	}
+	return got
+}
+
+func TestRunsWithOneTimestampShareEverySnapshot(t *testing.T) {
+	util, target := sharedRun(t, "a.dump", "b.dump")
+
+	for _, file := range []string{"./a.dump", "./b.dump"} {
+		if err := addFunc(util, nil, []string{file}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	for _, tier := range []string{"daily", "weekly", "monthly", "yearly"} {
+		if got := snapshotFiles(t, filepath.Join(target, tier)); !reflect.DeepEqual(got, []string{"2024-05-01_23-00-00"}) {
+			t.Errorf("%s snapshots = %v, want one shared snapshot", tier, got)
+			continue
+		}
+		got := snapshotFiles(t, filepath.Join(target, tier, "2024-05-01_23-00-00"))
+		if !reflect.DeepEqual(got, []string{"a.dump", "b.dump"}) {
+			t.Errorf("%s snapshot holds %v, want both runs' files", tier, got)
+		}
+	}
+}
+
+func TestFailedRunKeepsSharedSnapshot(t *testing.T) {
+	util, target := sharedRun(t, "a.dump")
+
+	if err := addFunc(util, nil, []string{"./a.dump"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := addFunc(util, nil, []string{"./missing.dump"}); err == nil {
+		t.Fatal("addFunc() succeeded with a missing source file")
+	}
+
+	got := snapshotFiles(t, filepath.Join(target, "daily", "2024-05-01_23-00-00"))
+	if !reflect.DeepEqual(got, []string{"a.dump"}) {
+		t.Fatalf("shared snapshot holds %v after a failed run, want [a.dump]", got)
+	}
+}
+
+func TestInvalidDateIsRejected(t *testing.T) {
+	originalDate := backupDate
+	t.Cleanup(func() {
+		backupDate = originalDate
+		rootCmd.SetArgs(nil)
+	})
+	rootCmd.SetArgs([]string{"--driver", "local", "--target", t.TempDir(), "--date", "yesterday", "main.go"})
+	if err := rootCmd.Execute(); err == nil {
+		t.Fatal("Execute() accepted an invalid --date")
+	}
+}
+
 type listErrorDriver struct {
 	drivers.BaseDriver
 	err        error

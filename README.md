@@ -63,6 +63,7 @@ Usage:
 
 Flags:
       --daily int          Amount of daily backups to keep (default 7)
+      --date string        Timestamp of the backup (2006-01-02_15-04-05, UTC). Runs with the same timestamp add their files to one shared snapshot
       --driver string      Driver selection (file, s3) (default "file")
   -h, --help               help for go-rotate-backups
       --monthly int        Amount of monthly backups to keep (default 12)
@@ -94,6 +95,20 @@ This makes the folders independent of how often the command runs: an hourly sche
 fills `daily` with every run while still adding exactly one backup per week, month and
 year to the other folders. If backup starts partway through a period, its first run
 becomes that period's weekly, monthly or yearly backup.
+
+__Shared snapshots__
+
+Several runs can build one snapshot by passing the same `--date`, for example to
+upload large files one at a time instead of staging them all locally:
+
+```shell
+ts=$(date -u +%Y-%m-%d_%H-%M-%S)
+go-rotate-backups --driver s3 --target postgres --date "$ts" ./a.dump
+go-rotate-backups --driver s3 --target postgres --date "$ts" ./b.dump
+```
+
+Every run lands in the same `${date}_${time}` folder of each tier it copies to. A
+run that fails removes only its own files, not those of the other runs.
 
 __Rotate__
 

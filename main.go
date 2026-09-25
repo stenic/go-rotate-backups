@@ -56,10 +56,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&v, "verbosity", "v", logrus.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic")
 	rootCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Don't change any files")
 	rootCmd.Flags().StringVar(&logFormat, "log-format", "text", "Log format (text, json)")
-
-	// Hidden
-	rootCmd.Flags().StringVar(&backupDate, "date", "", "Testing: Set time of the backup")
-	rootCmd.Flags().MarkHidden("date")
+	rootCmd.Flags().StringVar(&backupDate, "date", "", "Timestamp of the backup ("+DateFormat+", UTC). Runs with the same timestamp add their files to one shared snapshot")
 }
 
 func main() {
@@ -101,7 +98,11 @@ var rootCmd = &cobra.Command{
 			DateFormat: DateFormat,
 		}
 
-		if nowInput, err := time.Parse(DateFormat, date); err == nil {
+		if date != "" {
+			nowInput, err := time.Parse(DateFormat, date)
+			if err != nil {
+				return fmt.Errorf("invalid --date %q, want %s: %v", date, DateFormat, err)
+			}
 			now = nowInput
 		}
 
@@ -187,9 +188,15 @@ func addFunc(util utils.Utils, cmd *cobra.Command, files []string) error {
 
 	for _, dir := range targetDirs {
 		target := path.Join(dir, now.Format(DateFormat))
+		// Another run with the same --date may already have added its files to
+		// this snapshot; a failure must not take those with it.
+		shared, err := util.HasEntry(dir, now)
+		if err != nil {
+			return err
+		}
 		logrus.Infof("Backing up %d files to %s", len(files), target)
 		if err := util.CopyFiles(files, target); err != nil {
-			if cleanupErr := util.Driver.Delete(target); cleanupErr != nil {
+			if cleanupErr := util.RemovePartial(files, target, shared); cleanupErr != nil {
 				return fmt.Errorf("backup failed: %v; cleanup failed: %v", err, cleanupErr)
 			}
 			return err
