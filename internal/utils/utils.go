@@ -67,7 +67,13 @@ func (u *Utils) CoversPeriod(dirPath string, at time.Time, period Period) (bool,
 }
 
 func (u *Utils) coversPeriod(dirs []string, at time.Time, period Period) bool {
+	current := at.Format(u.DateFormat)
 	for _, dir := range dirs {
+		// The snapshot being written right now does not cover its own period:
+		// a later run with the same timestamp still has to add its files.
+		if dir == current {
+			continue
+		}
 		dirTime, err := time.Parse(u.DateFormat, dir)
 		if err != nil {
 			logrus.Warnf("Could not parse %s as date: %v", dir, err)
@@ -108,6 +114,37 @@ func (u *Utils) GetPaths(targetPath string) (string, string, string, string, err
 	}
 
 	return daily, weekly, monthly, yearly, nil
+}
+
+// HasEntry reports whether dirPath already holds a snapshot for exactly at.
+func (u *Utils) HasEntry(dirPath string, at time.Time) (bool, error) {
+	dirs, err := u.Driver.ListDirs(dirPath)
+	if err != nil {
+		return false, err
+	}
+	current := at.Format(u.DateFormat)
+	for _, dir := range dirs {
+		if dir == current {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+// RemovePartial undoes a failed CopyFiles. In a snapshot shared with other runs
+// only this run's files are removed; otherwise the whole target goes.
+func (u *Utils) RemovePartial(files []string, target string, shared bool) error {
+	if !shared {
+		return u.Driver.Delete(target)
+	}
+	for _, file := range files {
+		if err := u.Driver.Delete(path.Join(target, file)); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (u *Utils) CopyFiles(files []string, target string) error {
